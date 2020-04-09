@@ -61,17 +61,34 @@ add_action( 'woocommerce_checkout_get_value', 'bbloomer_save_name_fields', 20, 2
   
 function bbloomer_save_name_fields( $value, $imput ) {
 
+    $firstname = $lastname = $telephonenu = '';
+    if( isset($_COOKIE['canvas_firstandlastname']) && ! empty($_COOKIE['canvas_firstandlastname']) ) {
+        $names = explode(" ", $_COOKIE['canvas_firstandlastname']);
+        $firstname = $names[0];
+        $lastname = $names[1];
+    }
+
+    if( isset($_COOKIE['canvas_mobileNumber']) && ! empty($_COOKIE['canvas_mobileNumber']) ) {
+        $telephonenu = esc_attr( $_COOKIE['canvas_mobileNumber'] );        
+    }
+
     // Billing first name
-    if(isset($_GET['firstname']) && ! empty($_GET['firstname']) && $imput == 'billing_first_name' )
-        $value = esc_attr( $_GET['firstname'] );
+    if(isset($firstname) && ! empty($firstname) && $imput == 'billing_first_name' )
+        $value = esc_attr( $firstname );
 
     // Billing last name
-    if(isset($_GET['lastname']) && ! empty($_GET['lastname']) && $imput == 'billing_last_name' )
-        $value = esc_attr( $_GET['lastname'] );
+    if(isset($lastname) && ! empty($lastname) && $imput == 'billing_last_name' )
+        $value = esc_attr( $lastname );
 
     // Billing email
     if(isset($_GET['useremail']) && ! empty($_GET['useremail']) && $imput == 'billing_email' )
-        $value = sanitize_email( $_GET['useremail'] );
+        $value = sanitize_email( $_GET['useremail'] );    
+
+    if($imput == 'shipping_phone' )
+            $value = $telephonenu;
+
+    if($imput == 'billing_phone' )
+        $value = $telephonenu;
 
     return $value; 
 }
